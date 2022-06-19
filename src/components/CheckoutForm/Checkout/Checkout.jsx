@@ -17,7 +17,8 @@ import PaymentForm from "../PaymentForm";
 const steps = ["Shipping adress", "payment details"];
 const Checkout = ({ cart }) => {
   const classes = useStyle();
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0 );
+  const [shippingData, setShippingData] = useState({});
   const [checkoutToken, setCheckoutToken] = useState(null);
   useEffect(() => {
     const generateToken = async () => {
@@ -30,13 +31,18 @@ const Checkout = ({ cart }) => {
     };
     generateToken();
   }, [cart]);
-
+  const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const next = (data) => {
+    setShippingData(data);
+    nextStep();
+  };
   const Conformation = () => <div>confirmation</div>;
   const Form = () =>
     activeStep === 0 ? (
-      <AddressForm checkoutToken={checkoutToken} />
+      <AddressForm checkoutToken={checkoutToken} next={next} />
     ) : (
-      <PaymentForm />
+      <PaymentForm shippingData={shippingData} checkoutToken={checkoutToken} backStep={backStep}/>
     );
   return (
     <>
