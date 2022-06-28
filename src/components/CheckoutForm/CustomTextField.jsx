@@ -12,6 +12,7 @@ const CustomTextField = ({ name, label, required }) => {
         name={name}
         label={label}
         required={required}
+        defaultValue=""
       />
     </Grid>
   );

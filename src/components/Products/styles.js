@@ -10,4 +10,10 @@ export default makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
+  searchoff:{
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 }));

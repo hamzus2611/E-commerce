@@ -8,10 +8,15 @@ import Cart from "./components/Cart/Cart";
 import { purple } from "@mui/material/colors";
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import Checkout from "./components/CheckoutForm/Checkout/Checkout";
+import Sidebare from "./components/Sidebar/Sidebare";
 function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({});
+  const [ordre, setOrdre] = useState({});
   const [theme, setTheme] = useState();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const fetchProducts = async () => {
     const { data } = await commerce.products.list();
     setProducts(data);
@@ -36,6 +41,33 @@ function App() {
     const response = await commerce.cart.empty();
     setCart(response.cart);
   };
+  const handleSearch = async (search) => {
+    const { data } = await commerce.products.list({ query: search });
+    console.log(data);
+    setProducts(data);
+  };
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const refrechCart = async () => {
+    const newCart = await commerce.cart.refresh();
+    setCart(newCart);
+  };
+
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incommingOrder = await commerce.checkout.capture(
+        checkoutTokenId,
+        newOrder
+      );
+      setOrdre(incommingOrder);
+      refrechCart();
+    } catch (error) {
+      setErrorMessage(error.data.error.message);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCart();
@@ -64,7 +96,15 @@ function App() {
     <div>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <Navbar totalItems={cart.total_items} />
+          <Navbar
+            totalItems={cart.total_items}
+            handleSearch={handleSearch}
+            handleDrawerToggle={handleDrawerToggle}
+          />
+          <Sidebare
+            mobileOpen={mobileOpen}
+            handleDrawerToggle={handleDrawerToggle}
+          />
           <Routes>
             <Route
               path="/"
@@ -84,7 +124,17 @@ function App() {
                 />
               }
             />
-            <Route path="/checkout" element={<Checkout cart={cart}/>} />
+            <Route
+              path="/checkout"
+              element={
+                <Checkout
+                  cart={cart}
+                  ordre={ordre}
+                  onCaptureCheckout={handleCaptureCheckout}
+                  error={errorMessage}
+                />
+              }
+            />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
