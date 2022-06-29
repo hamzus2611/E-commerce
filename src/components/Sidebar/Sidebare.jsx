@@ -1,62 +1,147 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
+
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
-import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import {
+  AdUnits,
+  Blender,
+  Chair,
+  Computer,
+  Countertops,
+  ElectricalServices,
+  ExpandLess,
+  ExpandMore,
+  PhoneAndroid,
+  StarBorder,
+  Tablet,
+} from "@mui/icons-material";
+import { useState } from "react";
+import { Collapse } from "@mui/material";
+import { useEffect } from "react";
 
 const drawerWidth = 240;
 
-function Sidebare({ mobileOpen ,handleDrawerToggle}) {
-  /*   const { window } = props;
-   */
+function Sidebare({ mobileOpen,handleSearch, handleDrawerToggle }) {
+  const [search, setSerch] = useState("");
+  console.log(search);
+  const [open, setOpen] = useState(false);
+  const [openSante, setOpenSante] = useState(false);
+  const [openMaison, setOpenMaison] = useState(false);
+  const handleClickMaison = () => {
+    setOpenMaison(!openMaison);
+    setOpen(false);
+    setOpenSante(false);
+  };
+  const handleClick = () => {
+    setOpen(!open);
+    setOpenMaison(false);
+    setOpenSante(false);
+  };
+  const handleClicksante = () => {
+    setOpenSante(!openSante);
+    setOpenMaison(false);
+    setOpen(false);
+  };
+  
   const drawer = (
     <div>
       <Toolbar />
       <Divider />
       <List>
-        {["Appliances", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
+        <ListItemButton onClick={handleClickMaison}>
+          <ListItemIcon>
+            <Countertops />
+          </ListItemIcon>
+          <ListItemText primary="Maison && Bureau" />
+          {openMaison ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={openMaison} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Électroménager')}>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <ElectricalServices />
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary="Électroménager" />
             </ListItemButton>
-          </ListItem>
-        ))}
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Cuisine')} >
+              <ListItemIcon>
+                <Blender />
+              </ListItemIcon>
+              <ListItemText primary="Cuisine & Arts Culinaires" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Maison')}>
+              <ListItemIcon>
+                <Chair />
+              </ListItemIcon>
+              <ListItemText primary="Maison" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+        <ListItemButton onClick={handleClick}>
+          <ListItemIcon>
+            <AdUnits />
+          </ListItemIcon>
+          <ListItemText primary="Telephone Tablette" />
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Smartphone')}>
+              <ListItemIcon>
+                <PhoneAndroid />
+              </ListItemIcon>
+              <ListItemText primary="Smartphone" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Tablette')}>
+              <ListItemIcon>
+                <Tablet />
+              </ListItemIcon>
+              <ListItemText primary="Tablette" />
+            </ListItemButton>
+          </List>
+        </Collapse>
       </List>
       <Divider />
       <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
+        <ListItemButton onClick={handleClicksante}>
+          <ListItemIcon>
+            <AdUnits />
+          </ListItemIcon>
+          <ListItemText primary="Santé & Beauté" />
+          {openSante ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={openSante} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Maquillage')}>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <StarBorder />
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary="Maquillage" />
             </ListItemButton>
-          </ListItem>
-        ))}
+            <ListItemButton sx={{ pl: 4 }} onClick={()=>setSerch('Sante')}>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText primary="sante beaute beaute soins personnels" />
+            </ListItemButton>
+          </List>
+        </Collapse>
       </List>
     </div>
   );
 
-  /*   const container =
-    window !== undefined ? () => window().document.body : undefined; */
-
+  useEffect(() => {
+    if (search) {
+      handleSearch(search);
+    }
+  }, [search])
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -97,7 +182,6 @@ function Sidebare({ mobileOpen ,handleDrawerToggle}) {
               width: drawerWidth,
             },
           }}
-          
         >
           {drawer}
         </Drawer>

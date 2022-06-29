@@ -43,7 +43,6 @@ function App() {
   };
   const handleSearch = async (search) => {
     const { data } = await commerce.products.list({ query: search });
-    console.log(data);
     setProducts(data);
   };
   const handleDrawerToggle = () => {
@@ -103,6 +102,7 @@ function App() {
           />
           <Sidebare
             mobileOpen={mobileOpen}
+            handleSearch={handleSearch}
             handleDrawerToggle={handleDrawerToggle}
           />
           <Routes>
